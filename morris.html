@@ -1,0 +1,81 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <span></span>
+        <script src="closure-library/closure/goog/base.js"></script>
+        <script src="morris.js"></script>
+        <script src="ai.js"></script>
+        <script>
+        // Broken state: {"map":null,"currentPlayer":0,"mills":[["g","l","p"]],"playerState":2,"players":[{"pieces":0,"places":["a","g","p","l"]},{"pieces":0,"places":["o"]}]}
+        
+        function go() {
+            var canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 300;
+            document.body.insertBefore(canvas, document.body.children[0]);
+            var morris = games.morris.MorrisGame(canvas)
+
+            // Demo:
+            //morris.state.playerState = games.morris.PlayerStates.MOVE_PIECE;
+            //morris.state.players[0].places = 'abcqtwogi'.split('');
+            //morris.state.players[1].places = 'dksefmujv'.split('');
+            //morris.state.mills = [
+            //    'abc',
+            //    'def',
+            //    'dks',
+            //    'qtw'
+            //];
+                        
+            var test = {
+                "currentPlayer": 0,
+                "mills": [
+                    ["g", "l", "p"]
+                ],
+                "playerState": 2,
+                "players": [{
+                    "pieces": 0,
+                    "places": ["a", "g", "p", "l"]
+                }, {
+                    "pieces": 0,
+                    "places": ["o"]
+                }]
+            }          
+            test = {
+                "currentPlayer": 0,
+                "mills": [
+                ],
+                "playerState": 2,
+                "players": [{
+                    "pieces": 0,
+                    "places": "acfhkntvx".split('')
+                }, {
+                    "pieces": 0,
+                    "places": "bdejlosuw".split('')
+                }]
+            }          
+
+            //for (var key in test) morris.state[key] = test[key];
+            
+            morris.draw();
+            var step = function() {
+                if (morris.state.playerState !== games.morris.PlayerStates.LOST) {
+                    games.morris.nextMove(morris.state, 500).then(function(moves) {
+                        var move = moves[Math.floor(Math.random() * moves.length)];
+                        var newState = games.morris.executeMove(morris.state, move);
+                        morris.state = newState;
+                        morris.draw();
+                    });
+                    setTimeout(step);
+                } else {
+                    go();
+                }
+            };
+            
+            step();
+        
+        }
+        go();
+        </script>
+    </body>
+</html>
